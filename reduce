@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Filters (Perl.*)
+
+FError="data.+?error"
+FResponseError='banner":"[^2]\d{2}'
+FNoAnon="s[yi]stem.+-.+anon|private|anon.+disabled"
+FAngryServer="criminal|prosecution"
+FNoServer="firmware|printer"
+
+# Insert any pre-processing here
+
+lz4 -d "$1" | grep -Piv "$FError|$FResponseError|$FNoAnon|$FAngryServer|$FNoServer"
