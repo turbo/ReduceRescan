@@ -10,4 +10,4 @@ FNoServer="firmware|printer"
 
 # Insert any pre-processing here
 
-lz4 -d "$1" | grep -Piv "$FError|$FResponseError|$FNoAnon|$FAngryServer|$FNoServer"
+lz4 -d "$1"|grep -Piv "$FError|$FResponseError|$FNoAnon|$FAngryServer"

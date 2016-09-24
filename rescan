@@ -1,20 +1,17 @@
 #!/bin/bash
 
-# IP parsing (good enough)
-
-raw="$1"
-ip=$(echo "$raw" | grep -Po 'ip.+?\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}' | cut -c 4-)
-banner=$(echo "$raw" | grep -Po 'banner.+?2.*' | cut -c 8-)
-banner=${banner:: -2}
+ip="$1"
 timestamp=$(date +%s)
 
 # Payloads. Add your scripts here. This sample payload probes for anon access and
 # saves the complete exchange to the JSON log.
 
-openftp4=$(echo -e "user anonymous anonymous@\nquit\n" | timeout -k1 15 ftp -v -d -n "$ip" 2>/dev/null | tr '\n' '|')
+openftp4=$(echo -e "user anonymous anonymous@\nquit\n" | timeout -k1 10 ftp -v -n "$ip" 2>/dev/null | tr '\n' '%' | sed 's/%/\\n/g')
 
 # Output result
 
 if [[ $openftp4 =~ "230 " ]]; then
-  echo "{\"ip\":\"$ip\",\"timestamp\":$timestamp,\"banner\":\"$banner\",\"exchange\":\"$openftp4\"}," >> "./openftp4.json"
+  echo "{\"ip\":\"$ip\",\"ts\":$timestamp,\"lg\":\"$openftp4\"}," >> "./openftp4.json"
+else
+  echo "{\"ip\":\"$ip\",\"ts\":$timestamp,\"lg\":\"error\"}," >> "./openftp4.json"
 fi
